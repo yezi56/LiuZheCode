@@ -1,0 +1,13 @@
+# Install torch/torchvision with the CUDA build matching your server first if needed.
+torch
+torchvision
+
+numpy
+Pillow
+tqdm
+matplotlib
+scikit-learn
+six
+
+# Optional: only needed when training with --enable_vis.
+visdom
