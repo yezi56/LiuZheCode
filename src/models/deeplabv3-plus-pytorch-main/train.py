@@ -10,7 +10,7 @@ import torch.distributed as dist
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
-from nets.deeplabv3_plus import DeepLab
+from nets.deeplabv3_plus_dual import DeepLab
 from nets.deeplabv3_training import get_lr_scheduler, set_optimizer_lr, weights_init
 from utils.callbacks import EvalCallback, LossHistory
 from utils.dataloader import DeeplabDataset, deeplab_dataset_collate
@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("--sync-bn", type=str2bool, default=False)
     parser.add_argument("--fp16", type=str2bool, default=False)
     parser.add_argument("--num-classes", type=int, default=3)
-    parser.add_argument("--backbone", type=str, default="mobilenet", choices=["mobilenet", "xception"])
+    parser.add_argument("--backbone", type=str, default="mobilenet", choices=["mobilenet", "mobilenet_swin", "xception"])
     parser.add_argument("--pretrained", type=str2bool, default=False)
     parser.add_argument("--model-path", type=str, default="model_data/deeplab_mobilenetv2.pth")
     parser.add_argument("--downsample-factor", type=int, default=16, choices=[8, 16])

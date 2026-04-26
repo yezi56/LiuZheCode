@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from PIL import Image
 from torch import nn
 
-from nets.deeplabv3_plus import DeepLab
+from nets.deeplabv3_plus_dual import DeepLab
 from utils.utils import cvtColor, preprocess_input, resize_image, show_config
 
 
@@ -37,7 +37,7 @@ class DeeplabV3(object):
         #   mobilenet
         #   xception    
         #----------------------------------------#
-        "backbone"          : "mobilenet",
+        "backbone"          : "auto",
         "attention_type"    : "auto",
         "use_ppm"           : "auto",
         #----------------------------------------#
@@ -96,6 +96,19 @@ class DeeplabV3(object):
             return self.use_ppm.lower() in {"true", "1", "yes", "y"}
         return any(key.startswith("ppm.") for key in checkpoint.keys())
 
+    def _resolve_backbone(self, checkpoint):
+        if self.backbone and self.backbone != "auto":
+            return self.backbone
+
+        swin_markers = ("backbone.swin_branch.", "backbone.swin_fuse.")
+        has_swin = any(any(key.startswith(prefix) for prefix in swin_markers) for key in checkpoint.keys())
+        if has_swin:
+            return "mobilenet_swin"
+
+        xception_markers = ("backbone.conv1.", "backbone.block1.", "backbone.midflow.")
+        has_xception = any(any(key.startswith(prefix) for prefix in xception_markers) for key in checkpoint.keys())
+        return "xception" if has_xception else "mobilenet"
+
     #---------------------------------------------------#
     #   初始化Deeplab
     #---------------------------------------------------#
@@ -131,14 +144,15 @@ class DeeplabV3(object):
         #-------------------------------#
         checkpoint = torch.load(self.model_path, map_location="cpu")
         checkpoint = self._extract_state_dict(checkpoint)
+        backbone = self._resolve_backbone(checkpoint)
         attention_type = self._resolve_attention_type(checkpoint)
         use_ppm = self._resolve_use_ppm(checkpoint)
-        self.net = DeepLab(num_classes=self.num_classes, backbone=self.backbone, downsample_factor=self.downsample_factor, pretrained=False, attention_type=attention_type, use_ppm=use_ppm)
+        self.net = DeepLab(num_classes=self.num_classes, backbone=backbone, downsample_factor=self.downsample_factor, pretrained=False, attention_type=attention_type, use_ppm=use_ppm)
 
         device      = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.net.load_state_dict(checkpoint)
         self.net    = self.net.eval()
-        print('{} model, attention={}, use_ppm={}, and classes loaded.'.format(self.model_path, attention_type or 'none', use_ppm))
+        print('{} model, backbone={}, attention={}, use_ppm={}, and classes loaded.'.format(self.model_path, backbone, attention_type or 'none', use_ppm))
         if not onnx:
             if self.cuda:
                 self.net = nn.DataParallel(self.net)

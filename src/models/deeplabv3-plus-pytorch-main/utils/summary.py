@@ -9,7 +9,7 @@ import torch
 from thop import clever_format, profile
 from torchsummary import summary
 
-from nets.deeplabv3_plus import DeepLab
+from nets.deeplabv3_plus_dual import DeepLab
 
 if __name__ == "__main__":
     input_shape = [512, 512]

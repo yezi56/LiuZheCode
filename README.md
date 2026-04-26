@@ -116,6 +116,7 @@
 - `PPM after ASPP`
 - `Focal Loss`
 - `MixUp / CutMix`
+- `MobileNetV2 + Lite Swin Transformer` 轻量双骨干
 
 详细操作与训练命令见：
 
