@@ -1,0 +1,5 @@
+**/__pycache__/
+**/*.pyc
+docs/ChatGPT Image *.png
+src/modules/third_party/pytorch-multi-class-segmentation-focal-loss/
+src/modules/third_party/PSPNET_tutorial/

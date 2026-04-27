@@ -118,6 +118,11 @@
 - `MixUp / CutMix`
 - `MobileNetV2 + Lite Swin Transformer` 轻量双骨干
 
+其中 `Focal Loss` 和 `PPM` 还额外保留了 GitHub 参考源码映射，方便论文写作时追溯来源：
+
+- [third_party/focal_loss_reference](/D:/Code/all/src/modules/third_party/focal_loss_reference)
+- [third_party/ppm_reference](/D:/Code/all/src/modules/third_party/ppm_reference)
+
 详细操作与训练命令见：
 
 - [DeepLabV3+ README](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main/README.md)

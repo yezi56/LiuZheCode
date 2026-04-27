@@ -49,11 +49,37 @@ Custom pooling bins:
 python train.py --use-ppm true --ppm-bins 1 2 3 6
 ```
 
+Reference source:
+
+- `src/modules/third_party/ppm_reference/pyramid_pooling_module.py`
+- original GitHub tutorial: `https://github.com/cheeyeo/PSPNET_tutorial`
+
+How it is applied here:
+
+- the reference PSP-style PPM is used as design guidance
+- the active implementation is placed **after ASPP**
+- the active code lives in
+  `nets/deeplabv3_plus_dual.py::PyramidPoolingModule`
+
 ### 3. Focal Loss
 
 ```powershell
 python train.py --focal-loss true --focal-alpha 0.5 --focal-gamma 2.0
 ```
+
+Reference source:
+
+- `src/modules/third_party/focal_loss_reference/focal_loss.py`
+- original GitHub repository:
+  `https://github.com/cloudpark93/pytorch-multi-class-segmentation-focal-loss`
+
+How it is applied here:
+
+- the reference focal-loss formula is used as the base
+- the active implementation adds:
+  - segmentation ignore-label support
+  - soft-label support for MixUp / CutMix
+- the active code lives in `nets/deeplabv3_training.py::Focal_Loss`
 
 ### 4. MixUp / CutMix
 
@@ -170,6 +196,23 @@ python train.py --backbone mobilenet_swin --model-path model_data\deeplab_mobile
 5. `DeepLabV3+ + CBAM + PPM + Focal + MixUp`
 6. `DeepLabV3+ + MobileNetV2 + Lite Swin Transformer`
 7. `DeepLabV3+ + MobileNetV2 + Lite Swin Transformer + CBAM + PPM`
+
+## GitHub reference modules used in this project
+
+The following GitHub reference modules have been downloaded and mapped into the
+current project structure:
+
+- Focal Loss reference:
+  `src/modules/third_party/focal_loss_reference`
+- PPM reference:
+  `src/modules/third_party/ppm_reference`
+
+These reference modules are not called directly by the training entrypoint.
+Instead, they serve two purposes:
+
+- keep the formula/module provenance clear for the paper codebase
+- provide clean reference implementations while the active DeepLabV3+ code keeps
+  task-specific extensions
 
 ## VOC2 commands
 

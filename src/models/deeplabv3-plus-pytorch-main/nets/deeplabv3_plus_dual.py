@@ -183,6 +183,11 @@ class ASPP(nn.Module):
 class PyramidPoolingModule(nn.Module):
     def __init__(self, in_channels, out_channels=256, pool_sizes=(1, 2, 3, 6)):
         super().__init__()
+        # The structure follows the standard PSP-style PPM design. A clean
+        # reference copy is tracked under:
+        # src/modules/third_party/ppm_reference/pyramid_pooling_module.py
+        # Here we keep the final projection inside the module so it can be
+        # inserted directly after ASPP in DeepLabV3+.
         branch_channels = max(in_channels // len(pool_sizes), 1)
         self.stages = nn.ModuleList(
             [

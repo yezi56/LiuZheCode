@@ -39,6 +39,10 @@ def Softmax_CE_Loss(inputs, soft_target, cls_weights, num_classes=21):
     return loss.sum() / normalizer
 
 def Focal_Loss(inputs, target, cls_weights, num_classes=21, alpha=0.5, gamma=2):
+    # Extended from the focal-loss reference under:
+    # src/modules/third_party/focal_loss_reference/focal_loss.py
+    # This version keeps ignore-label behavior and also supports soft labels
+    # produced by MixUp / CutMix.
     n, c, h, w = inputs.size()
     if target.dim() == 4:
         nt, ht, wt, ct = target.size()
