@@ -32,6 +32,8 @@
 - [pspnet-pytorch-master](/D:/Code/all/src/models/pspnet-pytorch-master)
 - [unet-pytorch-main](/D:/Code/all/src/models/unet-pytorch-main)
 - [CBAM.PyTorch-master](/D:/Code/all/src/models/CBAM.PyTorch-master)
+- [efficientnet-pytorch-classification](/D:/Code/all/src/models/efficientnet-pytorch-classification)
+- [efficientnetv2-pytorch-classification](/D:/Code/all/src/models/efficientnetv2-pytorch-classification)
 
 ### 共享模块
 
@@ -40,6 +42,10 @@
 说明：
 
 - 之前提到过的 `DeepLabV3Plus-Pytorch-master` 当前已经不在现有工作区中，不作为当前总仓库的实际模型目录。
+- `EfficientNet` 和 `EfficientNetV2` 当前作为分类模型代码保留在工作区中，主要用于：
+  - 复用轻量骨干设计思路
+  - 后续迁移到分割任务做 backbone 对照
+  - 分类预训练与分割迁移实验的资料积累
 
 ## 各模型初始化权重现状
 
