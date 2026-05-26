@@ -1,0 +1,32 @@
+{
+  "folders": [
+    {
+      "name": "Lab Root",
+      "path": "."
+    },
+    {
+      "name": "Models",
+      "path": "src/models"
+    },
+    {
+      "name": "Modules",
+      "path": "src/modules"
+    },
+    {
+      "name": "Docs",
+      "path": "docs"
+    },
+    {
+      "name": "Configs",
+      "path": "configs"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/outputs": true,
+      "**/*devkit": true
+    }
+  }
+}

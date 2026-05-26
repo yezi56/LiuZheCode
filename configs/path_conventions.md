@@ -1,8 +1,8 @@
 # Path Conventions
 
-## 总原则
+## 原则
 
-以后尽量不要把真实数据集和大量训练结果直接塞回模型源码目录，而是通过“参数化路径”来引用。
+数据集、训练输出、日志、预测可视化都应当参数化，不要写死到模型源码里。这样换数据集时，只需要改命令或配置，不需要改代码。
 
 ## 推荐外部路径
 
@@ -12,35 +12,29 @@
 日志根目录:   D:\SegRuns\logs
 ```
 
-如果你想全部放在当前仓库下，也建议统一到：
+## 推荐命令风格
 
-```text
-D:\Code\all\data
-D:\Code\all\outputs
-D:\Code\all\logs
-```
-
-## 推荐参数写法
-
-以你当前改过的 `deeplabv3-plus-pytorch-main` 为例，推荐命令风格：
+以 `deeplabv3plus-grape` 为例：
 
 ```powershell
 python train.py `
   --dataset-name VOC2_iter1 `
   --vocdevkit-path D:\SegData\grape\VOC2_iter1devkit `
-  --save-dir D:\SegRuns\outputs\deeplabv3_plus\grape_voc2_iter1\exp01\weights `
-  --log-dir D:\SegRuns\logs\deeplabv3_plus\grape_voc2_iter1\exp01
+  --save-dir D:\SegRuns\outputs\deeplabv3plus-grape\grape_voc2_iter1\exp01\weights `
+  --log-dir D:\SegRuns\logs\deeplabv3plus-grape\grape_voc2_iter1\exp01
 ```
 
-## 统一命名建议
+## 命名建议
 
 - `dataset root`: 数据集总根目录
-- `vocdevkit path`: 当前具体实验数据集
-- `save dir`: 权重、检查点目录
-- `log dir`: loss、miou、tensorboard、训练日志目录
+- `vocdevkit path`: 当前实验使用的 VOC 格式数据集
+- `save dir`: 权重与检查点目录
+- `log dir`: loss、mIoU、TensorBoard、训练日志目录
+- `output dir`: 验证集可视化、预测结果、指标图表目录
 
-## 复现实验时的建议
+## 换数据集时的建议
 
-- 不同模型共用同一数据集根目录
-- 不同实验只替换 `save_dir` 和 `log_dir`
-- 不覆盖旧实验，保持一实验一目录
+1. 数据先放到仓库外部，例如 `D:\SegData\new_dataset`。
+2. 用独立脚本转换为训练脚本需要的格式。
+3. 训练命令只改 `--vocdevkit-path`、`--save-dir`、`--log-dir`。
+4. 新数据集稳定后，再把转换脚本整理进对应模型的 `utils` 目录。

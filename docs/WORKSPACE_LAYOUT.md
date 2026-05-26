@@ -2,28 +2,34 @@
 
 ## 目标
 
-这个总仓库不是单一项目，而是一个“论文实验工作台”。整理重点不是把所有代码强行揉成一个工程，而是做到：
+这个仓库是语义分割论文实验工作台。整理原则是：
 
-- 模型来源清楚
-- 模块复用清楚
-- 数据路径可替换
-- 输出路径可扩展
-- 日志与结果更容易归档
+- 模型目录按模型名字命名。
+- 数据集放到仓库外部。
+- 日志和输出按模型、数据集、实验名分层。
+- 第三方模块保留来源说明，方便论文复现和引用。
+- 删除样例图片、临时输出、缓存文件和旧数据集。
 
-## 建议逻辑结构
+## 当前结构
 
 ```text
 all/
 ├─ src/
 │  ├─ models/
-│  │  ├─ deeplabv3-plus-pytorch-main/
-│  │  ├─ DeepLabV3Plus-Pytorch-master/
-│  │  ├─ hrnet-pytorch-main/
-│  │  ├─ pspnet-pytorch-master/
-│  │  ├─ unet-pytorch-main/
-│  │  └─ CBAM.PyTorch-master/
+│  │  ├─ deeplabv3plus-grape/
+│  │  ├─ hrnet/
+│  │  ├─ pspnet/
+│  │  ├─ unet-voc/
+│  │  ├─ unet-attention/
+│  │  ├─ unetpp/
+│  │  ├─ segnext/
+│  │  ├─ cbam/
+│  │  ├─ efficientnet/
+│  │  └─ efficientnetv2/
 │  └─ modules/
-│     └─ shared_attention/
+│     ├─ attention_zoo/
+│     ├─ shared_attention/
+│     └─ third_party/
 ├─ configs/
 ├─ docs/
 ├─ data/
@@ -31,55 +37,63 @@ all/
 └─ outputs/
 ```
 
-## 实际使用建议
+## 模型目录规则
 
-### 1. 模型源码
+目录名尽量直接使用模型名：
 
-每个模型保持各自内部结构不变，避免为了“好看”而破坏原有训练脚本。
+- `hrnet`
+- `pspnet`
+- `unetpp`
+- `unet-attention`
+- `segnext`
+- `efficientnet`
+- `efficientnetv2`
 
-### 2. 数据集
+如果某个工程已经结合了具体任务或改造方向，可以加后缀：
 
-数据集建议长期放在仓库外部，例如：
+- `deeplabv3plus-grape`
+- `unet-voc`
 
-```text
-D:\SegData\grape\VOC2devkit
-D:\SegData\grape\VOC2_iter1devkit
-```
+## 数据规则
 
-### 3. 输出目录
-
-建议统一实验输出结构：
-
-```text
-outputs/
-└─ deeplabv3_plus/
-   └─ grape/
-      └─ exp_2026_04_25_iter1/
-         ├─ weights/
-         ├─ val_vis/
-         └─ metrics/
-```
-
-### 4. 日志目录
-
-建议统一日志结构：
+仓库不保存真实数据集和样例数据。推荐外部路径：
 
 ```text
-logs/
-└─ deeplabv3_plus/
-   └─ grape/
-      └─ exp_2026_04_25_iter1/
+D:\SegData\<dataset_name>
 ```
 
-## 适合论文实验的命名方式
+每个训练脚本后续都应通过参数传入数据路径，例如：
 
-- 模型名：`deeplabv3_plus` / `pspnet` / `hrnet` / `unet`
-- 数据集名：`grape_voc2` / `grape_voc2_iter1`
-- 实验名：`exp01_baseline` / `exp02_cbam` / `exp03_shared_attention`
+```powershell
+python train.py --vocdevkit-path D:\SegData\grape\VOC2_iter1devkit
+```
 
-推荐组合示例：
+## 输出规则
+
+输出建议放到外部路径：
 
 ```text
-outputs/deeplabv3_plus/grape_voc2/exp02_cbam
-logs/deeplabv3_plus/grape_voc2/exp02_cbam
+D:\SegRuns\outputs\<model_name>\<dataset_name>\<experiment_name>
+D:\SegRuns\logs\<model_name>\<dataset_name>\<experiment_name>
 ```
+
+如果暂时放在仓库内，也按同样结构放在：
+
+```text
+outputs/<model_name>/<dataset_name>/<experiment_name>
+logs/<model_name>/<dataset_name>/<experiment_name>
+```
+
+## 清理规则
+
+这些内容不应进入 Git：
+
+- `__pycache__`
+- `.pyc`
+- 训练输出目录
+- 真实数据集
+- 样例图片
+- 大批量 mask、预测图、叠加图
+- 临时 CSV 指标表
+
+如果某张图确实用于论文或 README 说明，应放到 `docs/assets` 并在提交前确认来源和必要性。

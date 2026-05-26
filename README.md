@@ -1,148 +1,123 @@
-﻿# Semantic Segmentation Lab
+# Semantic Segmentation Lab
 
-`D:\Code\all` 现在作为一个统一的语义分割论文实验总仓库使用，目标是尽可能集中管理：
+`D:\Code\all` 是语义分割论文实验总仓库。它的目标不是把所有模型硬合成一个工程，而是把不同模型、模块、训练脚本、实验输出规范地放在同一个实验台里，方便后续做对比实验和消融实验。
 
-- 多种语义分割模型
-- 可复用注意力模块
-- 统一的数据、日志、输出和文档规范
+## 当前目录
 
-## 推荐打开方式
+```text
+all/
+├─ src/
+│  ├─ models/
+│  │  ├─ deeplabv3plus-grape/
+│  │  ├─ hrnet/
+│  │  ├─ pspnet/
+│  │  ├─ unet-voc/
+│  │  ├─ unet-attention/
+│  │  ├─ unetpp/
+│  │  ├─ segnext/
+│  │  ├─ cbam/
+│  │  ├─ efficientnet/
+│  │  └─ efficientnetv2/
+│  └─ modules/
+│     ├─ attention_zoo/
+│     ├─ shared_attention/
+│     └─ third_party/
+├─ configs/
+├─ docs/
+├─ data/
+├─ logs/
+└─ outputs/
+```
 
-优先在 VS Code 中打开：
+## 模型定位
 
-- [semantic-segmentation-lab.code-workspace](/D:/Code/all/semantic-segmentation-lab.code-workspace)
+| 目录 | 定位 |
+|---|---|
+| `src/models/deeplabv3plus-grape` | 当前主实验工程，基于 DeepLabV3+，已接入 CBAM、PPM、Focal Loss、MixUp/CutMix、MobileNetV2 + Lite Swin 双骨干 |
+| `src/models/hrnet` | HRNet 分割基线 |
+| `src/models/pspnet` | PSPNet 分割基线，也可作为 PPM 对照来源 |
+| `src/models/unet-voc` | U-Net VOC 风格分割基线 |
+| `src/models/unet-attention` | 从 `D:\Code\seg\unet` 整理出的通用 U-Net 注意力实验分支，已移除旧数据集绑定逻辑 |
+| `src/models/unetpp` | 从 `D:\Code\seg\U-Net++` 整理进来的 U-Net++ 参考实现 |
+| `src/models/segnext` | SegNeXt 官方实现整理版，可作为现代卷积注意力分割模型对照 |
+| `src/models/cbam` | CBAM 注意力机制参考实现 |
+| `src/models/efficientnet` | EfficientNet 分类参考，可作为轻量 backbone 储备 |
+| `src/models/efficientnetv2` | EfficientNetV2 分类参考，可作为轻量 backbone 储备 |
 
-这样看到的是整理后的实验工作区视图，比直接打开根目录更适合做论文实验和多模型对比。
+## 模块库
 
-## 当前目录约定
+| 目录 | 定位 |
+|---|---|
+| `src/modules/attention_zoo` | 从 `D:\Code\seg\unet\module` 整理进来的注意力/轻量模块集合，用于后续消融和可插拔实验 |
+| `src/modules/shared_attention` | 当前仓库已有的共享注意力模块 |
+| `src/modules/third_party` | 第三方参考实现与论文模块来源 |
 
-- [src](/D:/Code/all/src)：统一源码入口
-- [configs](/D:/Code/all/configs)：路径与实验配置说明
-- [docs](/D:/Code/all/docs)：工作台文档
-- [data](/D:/Code/all/data)：数据集入口说明，建议外置
-- [logs](/D:/Code/all/logs)：统一日志归档
-- [outputs](/D:/Code/all/outputs)：统一实验输出归档
+## 数据与结果
 
-## 当前实际保留的模型与模块
+真实数据集不要放进仓库。建议长期放在仓库外部，例如：
 
-### 模型
+```text
+D:\SegData\dataset_name
+D:\SegRuns\outputs
+D:\SegRuns\logs
+```
 
-- [deeplabv3-plus-pytorch-main](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main)
-- [hrnet-pytorch-main](/D:/Code/all/src/models/hrnet-pytorch-main)
-- [pspnet-pytorch-master](/D:/Code/all/src/models/pspnet-pytorch-master)
-- [unet-pytorch-main](/D:/Code/all/src/models/unet-pytorch-main)
-- [CBAM.PyTorch-master](/D:/Code/all/src/models/CBAM.PyTorch-master)
-- [efficientnet-pytorch-classification](/D:/Code/all/src/models/efficientnet-pytorch-classification)
-- [efficientnetv2-pytorch-classification](/D:/Code/all/src/models/efficientnetv2-pytorch-classification)
+仓库内的 `data`、`logs`、`outputs` 只保留说明和轻量占位，不提交真实图片、mask、csv、训练日志、预测结果和大批量实验输出。
 
-### 共享模块
+## 推荐实验命名
 
-- [shared_attention](/D:/Code/all/src/modules/shared_attention)
+模型名直接使用目录名：
 
-说明：
+```text
+deeplabv3plus-grape
+hrnet
+pspnet
+unet-voc
+unetpp
+```
 
-- 之前提到过的 `DeepLabV3Plus-Pytorch-master` 当前已经不在现有工作区中，不作为当前总仓库的实际模型目录。
-- `EfficientNet` 和 `EfficientNetV2` 当前作为分类模型代码保留在工作区中，主要用于：
-  - 复用轻量骨干设计思路
-  - 后续迁移到分割任务做 backbone 对照
-  - 分类预训练与分割迁移实验的资料积累
+实验输出建议使用：
 
-## 各模型初始化权重现状
-
-下面这张表是按当前代码仓库里的真实文件状态加上各工程默认代码配置整理的。
-
-| 模型 | 代码默认期望文件 | 当前是否实际存在 | 当前本地文件 | 说明 |
-|---|---|---|---|---|
-| `deeplabv3-plus-pytorch-main` | `model_data/deeplab_mobilenetv2.pth` | 有 | [model_data/deeplab_mobilenetv2.pth](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main/model_data/deeplab_mobilenetv2.pth) | 当前 V3+ 默认加载的本地初始化权重，主干是 `mobilenetv2` |
-| `hrnet-pytorch-main` | `model_data/hrnetv2_w18_weights_voc.pth` | 没有 | [model_data/README.md](/D:/Code/all/src/models/hrnet-pytorch-main/model_data/README.md) | 代码默认想加载 `hrnetv2_w18_weights_voc.pth`，但当前仓库里只有占位说明，没有实际 `.pth` |
-| `pspnet-pytorch-master` | `model_data/pspnet_mobilenetv2.pth` | 有 | [model_data/pspnet_mobilenetv2.pth](/D:/Code/all/src/models/pspnet-pytorch-master/model_data/pspnet_mobilenetv2.pth) | PSPNet 当前可直接使用的本地初始化权重，主干是 `mobilenetv2` |
-| `unet-pytorch-main` | `model_data/unet_vgg_voc.pth` | 没有 | [model_data/README.md](/D:/Code/all/src/models/unet-pytorch-main/model_data/README.md) | 代码默认想加载 `unet_vgg_voc.pth`，但当前仓库里只有占位说明，没有实际 `.pth` |
-| `CBAM.PyTorch-master` | 无固定分割权重文件 | 没有 | 无 | 这是注意力机制实现仓库，不是完整分割工程；训练脚本里直接构建 `resnet50/resnet101` 或 `resnet50_cbam`，默认 `pretrained=False` |
-
-### 目前可以直接用于初始化的模型权重
-
-- `DeepLabV3+`：`deeplab_mobilenetv2.pth`
-- `PSPNet`：`pspnet_mobilenetv2.pth`
-
-### 目前代码里写了默认路径，但本地并没有文件的模型
-
-- `HRNet`：默认写的是 `hrnetv2_w18_weights_voc.pth`
-- `UNet`：默认写的是 `unet_vgg_voc.pth`
-
-### 目前没有独立初始化权重仓库属性的模块
-
-- `CBAM`：模块仓库，本身不提供分割模型初始化权重
-
-### 当前结论
-
-- 现在真正能开箱即用的初始化权重只有两份：`DeepLabV3+` 和 `PSPNet`
-- `HRNet`、`UNet` 的代码里虽然已经写了默认权重文件名，但本地仓库目前没有对应文件
-- `CBAM` 当前在总仓库里承担的是“注意力模块/插件”角色，不单独作为一个带现成初始化权重的分割工程使用
-
-## 数据与输出路径建议
-
-你的原始数据集已经迁到仓库外部了，这是对的。后续建议统一遵循：
-
-- 数据集根目录放在仓库外部，例如 `D:\SegData\...`
-- 训练输出统一放到仓库外部或 [outputs](/D:/Code/all/outputs) 下
-- 训练日志统一放到仓库外部或 [logs](/D:/Code/all/logs) 下
-
-更具体的命名约定见：
-
-- [WORKSPACE_LAYOUT.md](/D:/Code/all/docs/WORKSPACE_LAYOUT.md)
-- [path_conventions.md](/D:/Code/all/configs/path_conventions.md)
-
-## logs / outputs 当前归档结构
-
-我已经在 [logs](/D:/Code/all/logs) 和 [outputs](/D:/Code/all/outputs) 下给主要模型建好了统一目录：
-
-- `deeplabv3_plus`
-- `hrnet`
-- `pspnet`
-- `unet`
-- `cbam`
-
-每个模型下又预留了：
-
-- `baseline`
-- `grape_voc2`
-- `grape_voc2_iter1`
-- `ablation`
+```text
+outputs/<model_name>/<dataset_name>/<experiment_name>/
+logs/<model_name>/<dataset_name>/<experiment_name>/
+```
 
 例如：
 
-- [logs/deeplabv3_plus/grape_voc2](/D:/Code/all/logs/deeplabv3_plus/grape_voc2)
-- [outputs/deeplabv3_plus/grape_voc2_iter1](/D:/Code/all/outputs/deeplabv3_plus/grape_voc2_iter1)
+```text
+outputs/deeplabv3plus-grape/grape_voc2_iter1/exp03_cbam_ppm_focal/
+logs/deeplabv3plus-grape/grape_voc2_iter1/exp03_cbam_ppm_focal/
+```
 
-## 当前 DeepLabV3+ 已接入的实验扩展
+## 初始化权重状态
 
-当前 [deeplabv3-plus-pytorch-main](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main) 已经接入：
+| 模型 | 默认期望权重 | 当前状态 |
+|---|---|---|
+| `deeplabv3plus-grape` | `model_data/deeplab_mobilenetv2.pth` | 已存在，可直接用于 MobileNetV2 初始化 |
+| `pspnet` | `model_data/pspnet_mobilenetv2.pth` | 已存在，可直接用于 PSPNet MobileNetV2 初始化 |
+| `hrnet` | `model_data/hrnetv2_w18_weights_voc.pth` | 代码期望该文件，当前本地未配齐 |
+| `unet-voc` | `model_data/unet_vgg_voc.pth` | 代码期望该文件，当前本地未配齐 |
+| `unet-attention` | 无固定默认权重 | 作为可插拔注意力 U-Net 实验分支，默认从头训练或手动指定 checkpoint |
+| `segnext` | 上游 README 给出 Tsinghua Cloud 预训练链接 | 当前只保留源码和配置，权重不入库 |
+| `cbam` | 无固定分割权重 | 作为注意力模块参考，不是独立分割训练主线 |
+| `efficientnet` / `efficientnetv2` | 分类预训练权重 | 作为 backbone 参考，暂不作为当前分割主实验入口 |
 
-- `CBAM`
-- `PPM after ASPP`
-- `Focal Loss`
-- `MixUp / CutMix`
-- `MobileNetV2 + Lite Swin Transformer` 轻量双骨干
+## 当前主实验路线
 
-其中 `Focal Loss` 和 `PPM` 还额外保留了 GitHub 参考源码映射，方便论文写作时追溯来源：
-
-- [third_party/focal_loss_reference](/D:/Code/all/src/modules/third_party/focal_loss_reference)
-- [third_party/ppm_reference](/D:/Code/all/src/modules/third_party/ppm_reference)
-
-详细操作与训练命令见：
-
-- [DeepLabV3+ README](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main/README.md)
-- [Windows.md](/D:/Code/all/src/models/deeplabv3-plus-pytorch-main/Windows.md)
-
-## 当前最推荐的论文实验路线
-
-建议按这个顺序做对比：
+建议论文实验按下面顺序组织：
 
 1. `DeepLabV3+`
 2. `DeepLabV3+ + CBAM`
 3. `DeepLabV3+ + CBAM + PPM`
-4. `DeepLabV3+ + CBAM + PPM + Focal`
-5. `DeepLabV3+ + CBAM + PPM + Focal + MixUp`
-6. `DeepLabV3+ + CBAM + PPM + Focal + CutMix`
+4. `DeepLabV3+ + CBAM + PPM + Focal Loss`
+5. `DeepLabV3+ + CBAM + PPM + Focal Loss + MixUp`
+6. `DeepLabV3+ + CBAM + PPM + Focal Loss + CutMix`
+7. `DeepLabV3+ + MobileNetV2/Swin 双骨干` 与轻量化对比
+8. `SegNeXt` 作为现代卷积注意力分割模型横向对照
 
-这样实验路线最清楚，后面写论文也最好讲。
+细节文档：
+
+- [工作区结构](D:/Code/all/docs/WORKSPACE_LAYOUT.md)
+- [路径约定](D:/Code/all/configs/path_conventions.md)
+- [Git/GitHub 命令](D:/Code/all/docs/GIT_GITHUB_COMMANDS.md)

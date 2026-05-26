@@ -1,5 +1,41 @@
 **/__pycache__/
 **/*.pyc
-docs/ChatGPT Image *.png
+
+# Local assistant/editor metadata
+.claude/
+.vscode/
+nature-skills-main/
+nature-skills-main.zip
+*.zip
+
+# Datasets and generated experiment artifacts
+data/*
+!data/README.md
+logs/*
+!logs/README.md
+outputs/*
+!outputs/README.md
+**/outputs/
+**/logs/loss_*/
+**/*devkit/
+**/VOCdevkit/
+**/datasets/
+
+# Generated visual/data files should stay outside the code repo.
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.bmp
+**/*.gif
+**/*.tif
+**/*.tiff
+**/*.csv
+
+# Model checkpoints and training dumps.
+**/*.pth
+**/*.pt
+**/*.onnx
+
+# Third-party raw clone scratch space
 src/modules/third_party/pytorch-multi-class-segmentation-focal-loss/
 src/modules/third_party/PSPNET_tutorial/
